@@ -1,5 +1,6 @@
 package com.ocr.anthony;
 
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Order {
@@ -16,8 +17,10 @@ public class Order {
         System.out.println("3 - végétarien");
         System.out.println("Que souhaitez-vous comme menu ?");
     }
+
     /**
      * Display a selected menu.
+     *
      * @param nbMenu The selected menu.
      */
     public void displaySelectedMenu(int nbMenu) {
@@ -36,6 +39,7 @@ public class Order {
                 break;
         }
     }
+
     /**
      * Run asking process for a menu.
      */
@@ -61,7 +65,19 @@ public class Order {
      */
     public void runMenus() {
         System.out.println("Combien de menus souhaitez-vous commander ?");
-        int menuQuantity = sc.nextInt();
+        int menuQuantity = -1;
+        boolean responseIsGood;
+        do {
+            try {
+                menuQuantity = sc.nextInt();
+                responseIsGood = true;
+            } catch (InputMismatchException e) {
+                sc.next();
+                System.out.println("Vous devez saisir un nombre, correspondant au nombre de menus souhaités");
+                responseIsGood = false;
+            }
+        } while (!responseIsGood);
+
         orderSummary = "Résumé de votre commande :%n";
         for (int i = 0; i < menuQuantity; i++) {
             orderSummary += "Menu " + (i + 1) + ":%n";
@@ -70,12 +86,14 @@ public class Order {
         System.out.println("");
         System.out.println(String.format(orderSummary));
     }
+
     /**
      * Display a selected side depending on all sides enable or not.
      * All sides = vegetables, frites and rice
      * No all sides = rice or not
-     * @param nbSide The selected Side
-     * @param allSidesEnable  enable display for all side or not
+     *
+     * @param nbSide         The selected Side
+     * @param allSidesEnable enable display for all side or not
      */
     public void displaySelectedSide(int nbSide, boolean allSidesEnable) {
         if (allSidesEnable) {
@@ -107,8 +125,10 @@ public class Order {
             }
         }
     }
+
     /**
      * Display a selected drink.
+     *
      * @param nbDrink The selected drink.
      */
     public void displaySelectedDrink(int nbDrink) {
@@ -127,10 +147,12 @@ public class Order {
                 break;
         }
     }
+
     /**
      * Display all available sides depending on all sides enable or not.
      * All sides = vegetables, frites and rice
      * No all sides = rice or not
+     *
      * @param allSideEnable enable display for all side or not
      */
     public void displayAvailableSide(boolean allSideEnable) {
@@ -159,7 +181,8 @@ public class Order {
 
     /**
      * Display a question about a category in the standard input, get response and display it
-     * @param category the category of the question
+     *
+     * @param category  the category of the question
      * @param responses available responses
      * @return the number of the selected choice
      */
@@ -168,11 +191,19 @@ public class Order {
         for (int i = 1; i <= responses.length; i++)
             System.out.println(i + " - " + responses[i - 1]);
         System.out.println("Que souhaitez-vous comme " + category + "?");
-        int nbResponse;
+        int nbResponse = 0;
         boolean responseIsGood;
         do {
-            nbResponse = sc.nextInt();
-            responseIsGood = (nbResponse >= 1 && nbResponse <= responses.length);
+
+            try {
+                nbResponse = sc.nextInt();
+                responseIsGood = (nbResponse >= 1 && nbResponse <= responses.length);
+            } catch (InputMismatchException e) {
+                sc.next();//pour vider la ligne scanner
+                responseIsGood = false;
+            }
+
+
             if (responseIsGood) {
                 String choice = "Vous avez choisi comme " + category + " : " + responses[nbResponse - 1];
                 orderSummary += choice + "%n";
@@ -190,6 +221,7 @@ public class Order {
 
     /**
      * Display a question about menu in the standard input, get response and display it
+     *
      * @return the number of the selected menu
      */
     public int askMenu() {
